@@ -20,7 +20,7 @@ class TestCreateAccount:
         token = response_auth.get("token")
 
         body_create_user = {
-            "username": "alex2001",
+            "username": "alex200122",
             "password": "12345Alex%",
             "role": "ROLE_USER"
         }
@@ -39,7 +39,7 @@ class TestCreateAccount:
         login_user_response = requests.post(
             url="http://localhost:4111/api/auth/token/login",
             json={
-                "username": "alex2001",
+                "username": "alex200122",
                 "password": "12345Alex%",
             },
             headers={

@@ -18,7 +18,7 @@ class TestCreateUser:
         token = response_auth.get("token")
 
         body_create_user = {
-            "username": "alex33",
+            "username": "alex333",
             "password": "12345Alex%",
             "role": "ROLE_USER"
             }
@@ -33,7 +33,7 @@ class TestCreateUser:
         )
 
         assert r_create_user.status_code == 200
-        assert r_create_user.json().get("username") == "alex33"
+        assert r_create_user.json().get("username") == "alex333"
         assert r_create_user.json().get("role") == "ROLE_USER"
 
     @pytest.mark.parametrize(
