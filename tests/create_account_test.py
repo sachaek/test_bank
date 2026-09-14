@@ -2,6 +2,7 @@ import requests
 import pytest
 
 
+@pytest.mark.api
 class TestCreateAccount:
     def test_create_account(self):
         # auth admin

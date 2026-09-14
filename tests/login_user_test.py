@@ -2,6 +2,7 @@ import requests
 import pytest
 
 
+@pytest.mark.api
 class TestUserLogin:
     def test_login_admin(self):
         body_auth = {

@@ -2,6 +2,7 @@ import requests
 import pytest
 
 
+@pytest.mark.api
 class TestCreateUser:
     def test_create_user_valid(self):
         body_auth = {
