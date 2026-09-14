@@ -1,3 +1,6 @@
+from api.models.base_model import BaseModel
 
 
-class LoginUserRequest:
+class LoginUserRequest(BaseModel):
+    username: str
+    password: str
