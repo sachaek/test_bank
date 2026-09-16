@@ -5,47 +5,27 @@ from api.models.create_user_request import CreateUserRequest
 from api.models.create_user_response import CreateUserResponse
 from api.models.login_user_response import LoginUserResponse
 from api.models.login_user_requests import LoginUserRequest
+from api.requests.create_user_requester import CreateUserRequester
+from specs.request_specs import RequestSpecs
+from specs.response_specs import ResponseSpecs
 
 
 @pytest.mark.api
 class TestCreateUser:
     def test_create_user_valid(self):
-        login_user_request = LoginUserRequest(
-            username="admin",
-            password="123456"
-        )
-
-        r_auth = requests.post(
-            url="http://localhost:4111/api/auth/token/login",
-            json=login_user_request.model_dump()
-        )
-        assert r_auth.status_code == 200
-        login_user_response = LoginUserResponse.model_validate(r_auth.json())
-        assert login_user_request.username == login_user_response.user.username
-        assert login_user_response.user.role == "ROLE_ADMIN"
-
-        token = login_user_response.token
-
         create_user_request = CreateUserRequest(
-            username="alex77723331",
-            password="12345Alex%",
-            role="ROLE_USER",
+            username="Max1819122",
+            password="MaxPas!w0rd",
+            role="ROLE_USER"
         )
 
-        headers_create_user = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}"
-        }
-        response = requests.post(
-            url="http://localhost:4111/api/admin/create",
-            json=create_user_request.model_dump(),
-            headers=headers_create_user
-        )
+        response = CreateUserRequester(
+            request_spec=RequestSpecs.auth_headers(username="admin", password="123456"),
+            response_spec=ResponseSpecs.request_ok()
+        ).post(create_user_request)
 
-        assert response.status_code == 200
-        create_user_response = CreateUserResponse(**response.json())
-        assert create_user_request.username == create_user_response.username
-        assert create_user_request.role == create_user_response.role
+        assert create_user_request.username == response.username
+        assert create_user_request.role == response.role
 
     @pytest.mark.parametrize(
         "username, password",
