@@ -20,11 +20,14 @@ class TestCreateUser:
             json=login_user_request.model_dump()
         )
         assert r_auth.status_code == 200
-        response_auth = r_auth.json()
-        token = response_auth.get("token")
+        login_user_response = LoginUserResponse.model_validate(r_auth.json())
+        assert login_user_request.username == login_user_response.user.username
+        assert login_user_response.user.role == "ROLE_ADMIN"
+
+        token = login_user_response.token
 
         create_user_request = CreateUserRequest(
-            username="alex7772333",
+            username="alex77723331",
             password="12345Alex%",
             role="ROLE_USER",
         )
@@ -59,30 +62,32 @@ class TestCreateUser:
         ]
     )
     def test_create_user_invalid(self, username, password):
-        body_auth = {
-                  "username": "admin",
-                  "password": "123456"
-                }
+        login_user_request = LoginUserRequest(
+            username="admin",
+            password="123456"
+        )
+
         r_auth = requests.post(
             url="http://localhost:4111/api/auth/token/login",
-            json=body_auth
+            json=login_user_request.model_dump()
         )
         assert r_auth.status_code == 200
         response_auth = r_auth.json()
         token = response_auth.get("token")
 
-        body_create_user = {
-            "username": username,
-            "password": password,
-            "role": "ROLE_USER"
-            }
+        create_user_request = CreateUserRequest(
+            username=username,
+            password=password,
+            role="ROLE_USER"
+        )
+
         headers_create_user = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}"
         }
         r_create_user = requests.post(
             url="http://localhost:4111/api/admin/create",
-            json=body_create_user,
+            json=create_user_request.model_dump(),
             headers=headers_create_user
         )
 

@@ -1,65 +1,71 @@
 import requests
 import pytest
 
+from api.models.create_user_request import CreateUserRequest
+from api.models.login_user_requests import LoginUserRequest
+from api.models.login_user_response import LoginUserResponse
+
 
 @pytest.mark.api
 class TestUserLogin:
     def test_login_admin(self):
-        body_auth = {
-            "username": "admin",
-            "password": "123456"
-        }
+        login_user_request = LoginUserRequest(
+            username="admin",
+            password="123456"
+        )
         headers_auth = {
             "Content-Type": "application/json",
             "accept": "application/json"
         }
         r_auth = requests.post(
             url="http://localhost:4111/api/auth/token/login",
-            json=body_auth,
+            json=login_user_request.model_dump(),
             headers=headers_auth
         )
         assert r_auth.status_code == 200
-        assert r_auth.json().get("user").get("username") == "admin"
-        assert r_auth.json().get("user").get("role") == "ROLE_ADMIN"
+        login_user_response = LoginUserResponse.model_validate(r_auth.json())
+        assert login_user_request.username == login_user_response.user.username
+        assert login_user_response.user.role == "ROLE_ADMIN"
 
     def test_login_user(self):
-        # auth admin
-        body_auth = {
-            "username": "admin",
-            "password": "123456"
-        }
+        login_user_request = LoginUserRequest(
+            username="admin",
+            password="123456"
+        )
         r_auth = requests.post(
             url="http://localhost:4111/api/auth/token/login",
-            json=body_auth
+            json=login_user_request.model_dump()
         )
         assert r_auth.status_code == 200
-        response_auth = r_auth.json()
-        # получение токена
-        token = response_auth.get("token")
+        login_user_response = LoginUserResponse.model_validate(r_auth.json())
+        assert login_user_request.username == login_user_response.user.username
+        assert login_user_response.user.role == "ROLE_ADMIN"
+        token = login_user_response.token
 
-        body_create_user = {
-            "username": "alex20022",
-            "password": "12345Alex%",
-            "role": "ROLE_USER"
-        }
+        create_user_request = CreateUserRequest(
+            username="Lesha3",
+            password="12345Alex%",
+            role="ROLE_USER",
+        )
         headers_create_user = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}"
         }
         r_create_user = requests.post(
             url="http://localhost:4111/api/admin/create",
-            json=body_create_user,
+            json=create_user_request.model_dump(),
             headers=headers_create_user
         )
-
         assert r_create_user.status_code == 200
+
+        login_user_request = LoginUserRequest(
+            username="Lesha3",
+            password="12345Alex%",
+        )
 
         login_user_response = requests.post(
             url="http://localhost:4111/api/auth/token/login",
-            json={
-                "username": "alex20022",
-                "password": "12345Alex%",
-            },
+            json=login_user_request.model_dump(),
             headers={
                 "Content-Type": "application/json",
                 "accept": "application/json",
@@ -67,5 +73,6 @@ class TestUserLogin:
         )
 
         assert login_user_response.status_code == 200
-        assert login_user_response.json().get("user").get("username") == "alex20022"
-        assert login_user_response.json().get("user").get("role") == "ROLE_USER"
+        login_user_response = LoginUserResponse.model_validate(login_user_response.json())
+        assert login_user_request.username == login_user_response.user.username
+        assert login_user_response.user.role == "ROLE_USER"
