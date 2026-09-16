@@ -6,12 +6,20 @@ from api.models.login_user_response import LoginUserResponse
 
 class RequestSpecs:
     BASE_URL = "http://localhost:4111/api"
+
     @staticmethod
     def base_headers():
         return {
                 "Content-Type": "application/json",
                 "accept": "application/json",
             }
+
+    @staticmethod
+    def unauth_headers():
+        return {
+            "headers": RequestSpecs.base_headers(),
+            "base_url": RequestSpecs.BASE_URL
+        }
 
     @staticmethod
     def auth_headers(username: str, password: str):
