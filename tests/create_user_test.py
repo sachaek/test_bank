@@ -42,33 +42,12 @@ class TestCreateUser:
         ]
     )
     def test_create_user_invalid(self, username, password):
-        login_user_request = LoginUserRequest(
-            username="admin",
-            password="123456"
-        )
-
-        r_auth = requests.post(
-            url="http://localhost:4111/api/auth/token/login",
-            json=login_user_request.model_dump()
-        )
-        assert r_auth.status_code == 200
-        response_auth = r_auth.json()
-        token = response_auth.get("token")
-
         create_user_request = CreateUserRequest(
             username=username,
             password=password,
             role="ROLE_USER"
         )
-
-        headers_create_user = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}"
-        }
-        r_create_user = requests.post(
-            url="http://localhost:4111/api/admin/create",
-            json=create_user_request.model_dump(),
-            headers=headers_create_user
-        )
-
-        assert r_create_user.status_code == 400
+        CreateUserRequester(
+            request_spec=RequestSpecs.auth_headers(username="admin", password="123456"),
+            response_spec=ResponseSpecs.request_bad()
+        ).post(create_user_request)
