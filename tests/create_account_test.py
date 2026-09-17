@@ -1,10 +1,6 @@
-import requests
 import pytest
 
-from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserRequest
-from api.models.login_user_requests import LoginUserRequest
-from api.models.login_user_response import LoginUserResponse
 from api.requests.create_user_requester import CreateUserRequester
 from specs.request_specs import RequestSpecs
 from specs.response_specs import ResponseSpecs
