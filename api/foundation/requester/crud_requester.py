@@ -1,0 +1,29 @@
+from typing import Optional
+
+import requests
+from requests import Response
+
+from api.configs.config import Config
+from api.foundation.http_requester import HttpRequester
+from api.models.base_model import BaseModel
+
+
+class CrudRequester(HttpRequester):
+    def post(self, model: Optional[BaseModel]) -> Response:
+        body = model.model_dump() if model is not None else ""
+
+        response = requests.post(
+            url=f"{Config.fetch("backendUrl")}{self.endpoint.url}",
+            headers=self.request_spec,
+            json=body
+        )
+        self.response_spec(response)
+        return response
+
+    def delete(self, user_id: int) -> Response:
+        response = requests.delete(
+            url=f"{Config.fetch("backendUrl")}{self.endpoint.url}/{user_id}",
+            headers=self.request_spec
+        )
+        self.response_spec(response)
+        return response
