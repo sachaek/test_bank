@@ -27,7 +27,7 @@ class TestUserLogin:
 
     def test_login_user(self):
         create_user_request = CreateUserRequest(
-            username="July12345",
+            username="July123845",
             password="MaxPas!w0rd",
             role="ROLE_USER"
         )
@@ -38,7 +38,7 @@ class TestUserLogin:
         ).post(create_user_request)
 
         login_user_request = LoginUserRequest(
-            username="July12345",
+            username="July123845",
             password="MaxPas!w0rd"
         )
         response = LoginUserRequester(

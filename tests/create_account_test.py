@@ -11,7 +11,7 @@ from api.requests.create_account_requester import CreateAccountRequester
 class TestCreateAccount:
     def test_create_account(self):
         create_user_request = CreateUserRequest(
-            username="Max55275",
+            username="Max55223775",
             password="MaxPas!w0rd",
             role="ROLE_USER"
         )
