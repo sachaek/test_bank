@@ -13,7 +13,7 @@ class CrudRequester(HttpRequester):
         body = model.model_dump() if model is not None else ""
 
         response = requests.post(
-            url=f"{Config.fetch("backendUrl")}{self.endpoint.url}",
+            url=f"{Config.fetch("backendUrl")}{self.endpoint.value.url}",
             headers=self.request_spec,
             json=body
         )
@@ -22,7 +22,7 @@ class CrudRequester(HttpRequester):
 
     def delete(self, user_id: int) -> Response:
         response = requests.delete(
-            url=f"{Config.fetch("backendUrl")}{self.endpoint.url}/{user_id}",
+            url=f"{Config.fetch("backendUrl")}{self.endpoint.value.url}/{user_id}",
             headers=self.request_spec
         )
         self.response_spec(response)

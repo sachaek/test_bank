@@ -25,3 +25,9 @@ class AdminSteps(BaseSteps):
             response_spec=ResponseSpecs.request_ok()
         ).delete(user_id)
 
+    def create_invalid_user(self, create_user_request: CreateUserRequest):
+        CrudRequester(
+            request_spec=RequestSpecs.auth_headers(username="admin", password="123456"),
+            endpoint=Endpoint.ADMIN_CREATE_USER,
+            response_spec=ResponseSpecs.request_bad()
+        ).post(create_user_request)

@@ -33,13 +33,10 @@ class TestCreateUser:
             ("Maxx6", "PASSW0RD")
         ]
     )
-    def test_create_user_invalid(self, username, password):
+    def test_create_user_invalid(self, username, password, api_manager):
         create_user_request = CreateUserRequest(
             username=username,
             password=password,
             role="ROLE_USER"
         )
-        CreateUserRequester(
-            request_spec=RequestSpecs.auth_headers(username="admin", password="123456"),
-            response_spec=ResponseSpecs.request_bad()
-        ).post(create_user_request)
+        api_manager.admin_steps.create_invalid_user(create_user_request)
