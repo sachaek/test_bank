@@ -32,7 +32,7 @@ class RequestSpecs:
             token = response_data.token
             headers = RequestSpecs.base_headers()
             headers["Authorization"] = f"Bearer {token}"
-            return {headers}
+            return headers
         else:
             raise Exception("Failed to login")
         
