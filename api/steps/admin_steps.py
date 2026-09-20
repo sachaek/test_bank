@@ -2,6 +2,7 @@ from api.foundation.endpont import Endpoint
 from api.foundation.requester.crud_requester import CrudRequester
 from api.foundation.requester.validate_crud_requester import ValidateCrudRequester
 from api.models.create_user_request import CreateUserRequest
+from api.models.login_user_requests import LoginUserRequest
 from api.steps.base_steps import BaseSteps
 from specs.request_specs import RequestSpecs
 from specs.response_specs import ResponseSpecs
@@ -31,3 +32,11 @@ class AdminSteps(BaseSteps):
             endpoint=Endpoint.ADMIN_CREATE_USER,
             response_spec=ResponseSpecs.request_bad()
         ).post(create_user_request)
+
+    def login_user(self, login_user_request: LoginUserRequest):
+        response = ValidateCrudRequester(
+            request_spec=RequestSpecs.unauth_headers(),
+            endpoint=Endpoint.LOGIN_USER,
+            response_spec=ResponseSpecs.request_ok()
+        ).post(login_user_request)
+        return response

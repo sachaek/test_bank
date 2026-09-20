@@ -15,9 +15,7 @@ class RequestSpecs:
 
     @staticmethod
     def unauth_headers():
-        return {
-            "headers": RequestSpecs.base_headers()
-        }
+        return RequestSpecs.base_headers()
 
     @staticmethod
     def auth_headers(username: str, password: str):

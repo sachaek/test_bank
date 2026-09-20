@@ -4,6 +4,8 @@ from typing import Optional, Type
 from api.models.base_model import BaseModel
 from api.models.create_user_request import CreateUserRequest
 from api.models.create_user_response import CreateUserResponse
+from api.models.login_user_requests import LoginUserRequest
+from api.models.login_user_response import LoginUserResponse
 
 
 @dataclass
@@ -24,4 +26,10 @@ class Endpoint(Enum):
         request_model = None,
         url = "/admin/users",
         response_model = None
+    )
+
+    LOGIN_USER = EndpointConfiguration(
+        request_model = LoginUserRequest,
+        url = "/auth/token/login",
+        response_model = LoginUserResponse
     )

@@ -12,15 +12,12 @@ from specs.response_specs import ResponseSpecs
 
 @pytest.mark.api
 class TestUserLogin:
-    def test_login_admin(self):
+    def test_login_admin(self, api_manager):
         login_user_request = LoginUserRequest(
             username="admin",
             password="123456"
         )
-        response = LoginUserRequester(
-            request_spec=RequestSpecs.unauth_headers(),
-            response_spec=ResponseSpecs.request_ok()
-        ).post(login_user_request)
+        response = api_manager.admin_steps.login_user(login_user_request)
 
         assert login_user_request.username == response.user.username
         assert response.user.role == "ROLE_ADMIN"
