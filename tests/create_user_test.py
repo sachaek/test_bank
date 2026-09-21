@@ -1,19 +1,16 @@
 import pytest
+
+from api.generators.model_generator import RandomModelGenerator
 from api.models.create_user_request import CreateUserRequest
-from api.requests.create_user_requester import CreateUserRequester
-from specs.request_specs import RequestSpecs
-from specs.response_specs import ResponseSpecs
 
 
 @pytest.mark.api
 class TestCreateUser:
-    def test_create_user_valid(self, api_manager):
-        create_user_request = CreateUserRequest(
-            username="Max18191722",
-            password="MaxPas!w0rd",
-            role="ROLE_USER"
-        )
-
+    @pytest.mark.parametrize(
+        "create_user_request",
+        [RandomModelGenerator.generate(CreateUserRequest)]
+    )
+    def test_create_user_valid(self, api_manager, create_user_request):
         response = api_manager.admin_steps.create_user(create_user_request)
 
         assert create_user_request.username == response.username
