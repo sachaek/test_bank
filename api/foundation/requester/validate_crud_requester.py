@@ -1,3 +1,5 @@
+from typing import Optional
+
 from api.foundation.http_requester import HttpRequester
 from api.foundation.requester.crud_requester import CrudRequester
 from api.models.base_model import BaseModel
@@ -12,7 +14,7 @@ class ValidateCrudRequester(HttpRequester):
             response_spec=response_spec
         )
 
-    def post(self, model: BaseModel) -> BaseModel:
+    def post(self, model: Optional[BaseModel] | None = None) -> BaseModel:
         response = self.crud_requester.post(model)
         self.response_spec(response)
         return self.endpoint.value.response_model.model_validate(response.json())

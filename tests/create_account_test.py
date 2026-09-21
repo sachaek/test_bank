@@ -9,22 +9,6 @@ from api.requests.create_account_requester import CreateAccountRequester
 
 @pytest.mark.api
 class TestCreateAccount:
-    def test_create_account(self):
-        create_user_request = CreateUserRequest(
-            username="Max55223775",
-            password="MaxPas!w0rd",
-            role="ROLE_USER"
-        )
-
-        CreateUserRequester(
-            request_spec=RequestSpecs.auth_headers(username="admin", password="123456"),
-            response_spec=ResponseSpecs.request_ok()
-        ).post(create_user_request)
-
-        response = CreateAccountRequester(
-            request_spec=RequestSpecs.auth_headers(username=create_user_request.username,
-                                                   password=create_user_request.password),
-            response_spec=ResponseSpecs.request_created()
-        ).post()
-
+    def test_create_account(self, api_manager, create_user_request):
+        response = api_manager.user_steps.create_account(create_user_request)
         assert response.balance == 0

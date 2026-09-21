@@ -22,26 +22,12 @@ class TestUserLogin:
         assert login_user_request.username == response.user.username
         assert response.user.role == "ROLE_ADMIN"
 
-    def test_login_user(self):
-        create_user_request = CreateUserRequest(
-            username="July123845",
-            password="MaxPas!w0rd",
-            role="ROLE_USER"
-        )
-
-        CreateUserRequester(
-            request_spec=RequestSpecs.auth_headers(username="admin", password="123456"),
-            response_spec=ResponseSpecs.request_ok()
-        ).post(create_user_request)
-
+    def test_login_user(self, api_manager, create_user_request):
         login_user_request = LoginUserRequest(
-            username="July123845",
-            password="MaxPas!w0rd"
+            username=create_user_request.username,
+            password=create_user_request.password
         )
-        response = LoginUserRequester(
-            request_spec=RequestSpecs.unauth_headers(),
-            response_spec=ResponseSpecs.request_ok()
-        ).post(login_user_request)
+        response = api_manager.admin_steps.login_user(login_user_request)
 
         assert login_user_request.username == response.user.username
         assert response.user.role == "ROLE_USER"
