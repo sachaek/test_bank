@@ -13,7 +13,7 @@ class CrudRequester(HttpRequester):
     def post(self, model: Optional[BaseModel]) -> Response:
         body = model.model_dump() if model is not None else ""
 
-        with allure.step(f"POST request to {self.endpoint.value.url}"):
+        with allure.step(f"POST request to {Config.fetch('backendUrl')}{self.endpoint.value.url}"):
             allure.attach(str(body), "Request Body", allure.attachment_type.JSON)
 
         response = requests.post(
@@ -32,7 +32,7 @@ class CrudRequester(HttpRequester):
         return response
 
     def delete(self, user_id: int) -> Response:
-        with allure.step(f"DELETE request to {self.endpoint.value.url}/{user_id}"):
+        with allure.step(f"DELETE request to {Config.fetch('backendUrl')}{self.endpoint.value.url}/{user_id}"):
             allure.attach(f"Deleting user with ID: {user_id}", "Request Info", allure.attachment_type.TEXT)
 
         response = requests.delete(
