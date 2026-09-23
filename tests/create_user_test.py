@@ -19,7 +19,8 @@ class TestCreateUser:
         assert create_user_request.username == response.username
         assert create_user_request.role == response.role
         user_from_db = User.get_user_by_username(db_session, create_user_request.username)
-        assert user_from_db.username == create_user_request.username
+        assert user_from_db.username == create_user_request.username,\
+            f"Пользователь с username '{create_user_request.username}' не был создан в базе данных."
 
     @pytest.mark.parametrize(
         "username, password",
@@ -35,10 +36,13 @@ class TestCreateUser:
             ("Maxx6", "PASSW0RD")
         ]
     )
-    def test_create_user_invalid(self, username, password, api_manager):
+    def test_create_user_invalid(self, username: str, password: str, api_manager: ApiManager, db_session: Session):
         create_user_request = CreateUserRequest(
             username=username,
             password=password,
             role="ROLE_USER"
         )
         api_manager.admin_steps.create_invalid_user(create_user_request)
+
+        user_from_db = User.get_user_by_username(db_session, username)
+        assert user_from_db is None, f"Пользователь с username '{username}' был создан, но не должен был быть создан."
