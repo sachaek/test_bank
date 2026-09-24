@@ -16,3 +16,13 @@ class UserSteps(BaseSteps):
             response_spec=ResponseSpecs.request_created()
         ).post()
         return response
+
+    def change_balance(self, create_user_request: CreateUserRequest):
+        response = ValidateCrudRequester(
+            request_spec=RequestSpecs.auth_headers(
+                username=create_user_request.username,
+                password=create_user_request.password),
+            endpoint=Endpoint.ACCOUNT_DEPOSIT,
+            response_spec=ResponseSpecs.request_ok()
+        ).post()
+        return response
