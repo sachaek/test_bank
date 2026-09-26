@@ -11,7 +11,7 @@ from api.models.base_model import BaseModel
 
 class CrudRequester(HttpRequester):
     def post(self, model: Optional[BaseModel]) -> Response:
-        body = model.model_dump() if model is not None else ""
+        body = model.model_dump(by_alias=True) if model is not None else ""
 
         with allure.step(f"POST request to {Config.fetch('backendUrl')}{self.endpoint.value.url}"):
             allure.attach(str(body), "Request Body", allure.attachment_type.JSON)
