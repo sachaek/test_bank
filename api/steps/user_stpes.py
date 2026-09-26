@@ -1,4 +1,5 @@
 from api.foundation.endpont import Endpoint
+from api.foundation.requester.crud_requester import CrudRequester
 from api.foundation.requester.validate_crud_requester import ValidateCrudRequester
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserRequest
@@ -28,5 +29,16 @@ class UserSteps(BaseSteps):
                 password=user.password),
             endpoint=Endpoint.ACCOUNT_DEPOSIT,
             response_spec=ResponseSpecs.request_ok()
+        ).post(deposit_request)
+        return response
+
+    def change_balance_invalid(self, user: CreateUserRequest, account_id: int, amount: float) -> DepositResponse:
+        deposit_request = DepositRequest(account_id=account_id, amount=amount)
+        response = CrudRequester(
+            request_spec=RequestSpecs.auth_headers(
+                username=user.username,
+                password=user.password),
+            endpoint=Endpoint.ACCOUNT_DEPOSIT,
+            response_spec=ResponseSpecs.request_bad()
         ).post(deposit_request)
         return response

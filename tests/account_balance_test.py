@@ -24,4 +24,15 @@ class TestAccountBalance:
             amount=amount)
         assert response.balance == create_account_request.balance + amount
 
-    def increase_balance_invalid(self):
+    @pytest.mark.parametrize("amount", [999.99, -1000.0, 0.0, -0.01, 1000000.0])
+    def test_increase_balance_invalid(self,
+                              db_session: Session,
+                              api_manager: ApiManager,
+                              create_user_request: CreateUserRequest,
+                              create_account_request: CreateAccountResponse,
+                              amount: float):
+        response = api_manager.user_steps.change_balance_invalid(
+            user=create_user_request,
+            account_id=create_account_request.id,
+            amount=amount)
+        assert response.status_code == 400
