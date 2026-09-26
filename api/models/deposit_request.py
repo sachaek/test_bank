@@ -8,4 +8,4 @@ from api.models.base_model import BaseModel
 
 class DepositRequest(BaseModel):
     account_id: int = Field(alias="accountId")
-    amount: Annotated[float, CreationRule(regex=r'^(?:[1-8]\d{3}(?:\.\d+)?|9000(?:\.0+)?)$')]
+    amount: float
