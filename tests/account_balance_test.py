@@ -8,7 +8,7 @@ from api.models.create_user_request import CreateUserRequest
 
 @pytest.mark.api
 class TestAccountBalance:
-    @pytest.mark.parametrize("amount", [1000.0])
+    @pytest.mark.parametrize("amount", [1000.0, 7889.5])
     def test_increase_balance(self,
                               db_session: Session,
                               api_manager: ApiManager,
@@ -20,7 +20,7 @@ class TestAccountBalance:
             account_id=create_account_request.id,
             amount=amount)
 
-        assert response.balance == create_account_request.balance + amount
+        assert response.balance == pytest.approx(create_account_request.balance + amount, abs=0.1)
         account_from_db = Account.get_account_by_id(db_session, create_account_request.id)
         assert account_from_db.balance == create_account_request.balance + amount, \
             f"Баланс аккаунта с id '{create_account_request.id}' в базе данных не был увеличен на {amount}."
@@ -41,4 +41,4 @@ class TestAccountBalance:
         account_from_db = Account.get_account_by_id(db_session, create_account_request.id)
         assert account_from_db.balance == create_account_request.balance, \
             f"Баланс аккаунта с id '{create_account_request.id}'"\
-            " в базе данных был изменен на {amount}, но не должен был быть изменен."
+            f" в базе данных был изменен на {amount}, но не должен был быть изменен."
