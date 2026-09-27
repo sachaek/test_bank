@@ -1,12 +1,8 @@
 import pytest
 from sqlalchemy.orm import Session
-
 from api.classes.api_manager import ApiManager
-from api.db.crud.account_crud import AccountCrudDB as Account
-from api.generators.model_generator import RandomModelGenerator
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserRequest
-from api.models.deposit_request import DepositRequest
 
 
 @pytest.mark.api
