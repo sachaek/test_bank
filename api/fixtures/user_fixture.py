@@ -12,18 +12,24 @@ def create_user_request(api_manager: ApiManager):
     api_manager.admin_steps.create_user(user_request)
     return user_request
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def create_account_response(api_manager: ApiManager, create_user_request: CreateUserRequest):
     response = api_manager.user_steps.create_account(create_user_request)
     return response
 
-@pytest.fixture()
-def create_account_response_2(
+@pytest.fixture(scope="function")
+def create_account_not_empty_balance_response(
     api_manager: ApiManager,
     create_user_request: CreateUserRequest,
     create_account_response: CreateAccountResponse,
 ):
-    response = api_manager.user_steps.create_account(create_user_request)
+    """Возвращает аккаунт с ненулевым балансом, создавая новый аккаунт и увеличивая его баланс на 1000."""
+    not_empty_response = api_manager.user_steps.create_account(create_user_request)
+    response = api_manager.user_steps.change_balance(
+        user=create_user_request,
+        account_id=not_empty_response.id,
+        amount=9_000
+    )
     assert response.id != create_account_response.id,\
         f"Аккаунт с id '{response.id}' был создан, но должен был быть уникальным и отличаться от id '{create_account_response.id}'."
     return response

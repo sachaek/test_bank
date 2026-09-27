@@ -53,6 +53,6 @@ class Endpoint(Enum):
 
     ACCOUNT_TRANSFER = EndpointConfiguration(
         request_model = TransferRequest,
-        url = "/account/transfer/",
+        url = "/account/transfer",
         response_model = TransferResponse
     )
