@@ -2,6 +2,7 @@ import pytest
 from sqlalchemy.orm import Session
 
 from api.classes.api_manager import ApiManager
+from api.db.crud.account_crud import AccountCrudDB as Account
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserRequest
 
@@ -22,7 +23,10 @@ class TestAccountTransfer:
             to_account=create_account_response,
             amount=amount
         )
-
+        from_account_db = Account.get_account_by_id(db_session, create_account_not_empty_balance_response.id)
+        to_account_db = Account.get_account_by_id(db_session, create_account_response.id)
+        assert from_account_db.balance == pytest.approx(create_account_not_empty_balance_response.balance - amount, abs=0.1)
+        assert to_account_db.balance == pytest.approx(create_account_response.balance + amount, abs=0.1)
         assert response.from_account_id == create_account_not_empty_balance_response.id
         assert response.to_account_id == create_account_response.id
         assert response.from_account_id_balance == pytest.approx(
