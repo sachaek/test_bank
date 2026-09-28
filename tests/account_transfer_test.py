@@ -50,3 +50,5 @@ class TestAccountTransfer:
         ), f"Ответ от API содержит неверный баланс аккаунта отправителя. "\
         f"Ожидалось: {create_account_not_empty_balance_response.balance - amount},"\
         f" получено: {response.from_account_id_balance}."
+
+    def test_transfer_invalid(self):

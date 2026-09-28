@@ -64,3 +64,23 @@ class UserSteps(BaseSteps):
             response_spec=ResponseSpecs.request_ok()
         ).post(transfer_request)
         return response
+
+    def transfer_invalid(self,
+                 user: CreateUserRequest,
+                 account: CreateAccountResponse,
+                 to_account: CreateAccountResponse,
+                 amount: float) -> TransferResponse:
+        transfer_request = TransferRequest(
+            fromAccountId=account.id,
+            toAccountId=to_account.id,
+            amount=amount
+        )
+        response = CrudRequester(
+            request_spec=RequestSpecs.auth_headers(
+                username=user.username,
+                password=user.password
+            ),
+            endpoint=Endpoint.ACCOUNT_TRANSFER,
+            response_spec=ResponseSpecs.request_bad()
+        ).post(transfer_request)
+        return response
