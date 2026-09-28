@@ -23,7 +23,7 @@ def create_account_not_empty_balance_response(
     create_user_request: CreateUserRequest,
     create_account_response: CreateAccountResponse,
 ):
-    """Возвращает аккаунт с ненулевым балансом, создавая новый аккаунт и увеличивая его баланс на 1000."""
+    """Возвращает аккаунт с ненулевым балансом, создавая новый аккаунт и увеличивая его баланс на 9000."""
     not_empty_response = api_manager.user_steps.create_account(create_user_request)
     response = api_manager.user_steps.change_balance(
         user=create_user_request,

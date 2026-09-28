@@ -5,6 +5,7 @@ from api.classes.api_manager import ApiManager
 from api.db.crud.account_crud import AccountCrudDB as Account
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserRequest
+from api.models.deposit_response import DepositResponse
 
 
 @pytest.mark.api
@@ -15,7 +16,7 @@ class TestAccountTransfer:
                       api_manager: ApiManager,
                       create_user_request: CreateUserRequest,
                       create_account_response: CreateAccountResponse,
-                      create_account_not_empty_balance_response: CreateAccountResponse,
+                      create_account_not_empty_balance_response: DepositResponse,
                       amount: float):
         response = api_manager.user_steps.transfer(
             user=create_user_request,
@@ -28,12 +29,16 @@ class TestAccountTransfer:
 
         assert from_account_db.balance == pytest.approx(
             create_account_not_empty_balance_response.balance - amount, abs=0.1
-        ), f"Баланс аккаунта с id '{create_account_not_empty_balance_response.id}' "\
-           "в базе данных не был уменьшен на {amount}."
+        ), (
+            f"Баланс аккаунта с id '{create_account_not_empty_balance_response.id}' "
+            f"в базе данных не был уменьшен на {amount}."
+        )
         assert to_account_db.balance == pytest.approx(
             create_account_response.balance + amount, abs=0.1
-        ), f"Баланс аккаунта с id '{create_account_response.id}' "\
-           "в базе данных не был увеличен на {amount}."
+        ), (
+            f"Баланс аккаунта с id '{create_account_response.id}' "
+            f"в базе данных не был увеличен на {amount}."
+        )
         assert response.from_account_id == create_account_not_empty_balance_response.id,\
         f"Ответ от API содержит неверный идентификатор аккаунта отправителя. "\
         f"Ожидалось: {create_account_not_empty_balance_response.id}, получено: {response.from_account_id}."
