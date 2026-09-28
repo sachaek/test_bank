@@ -65,7 +65,7 @@ class UserSteps(BaseSteps):
         ).post(transfer_request)
         return response
 
-    def transfer_invalid(self,
+    def transfer_foreign_user(self,
                  user: CreateUserRequest,
                  account: CreateAccountResponse,
                  to_account: CreateAccountResponse,
@@ -81,6 +81,6 @@ class UserSteps(BaseSteps):
                 password=user.password
             ),
             endpoint=Endpoint.ACCOUNT_TRANSFER,
-            response_spec=ResponseSpecs.request_bad()
+            response_spec=ResponseSpecs.not_found()
         ).post(transfer_request)
         return response

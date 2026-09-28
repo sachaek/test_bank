@@ -10,6 +10,8 @@ from api.models.deposit_response import DepositResponse
 
 @pytest.mark.api
 class TestAccountTransfer:
+    _amount_transfer_foreign_account = 500
+
     @pytest.mark.parametrize("amount", [1000.0, 7889.5])
     def test_transfer(self,
                       db_session: Session,
@@ -55,6 +57,27 @@ class TestAccountTransfer:
                               db_session: Session,
                               api_manager: ApiManager,
                               create_user_request: CreateUserRequest,
+                              create_user_request_2: CreateUserRequest,
                               create_account_response: CreateAccountResponse,
                               create_account_not_empty_balance_response: DepositResponse):
+        api_manager.user_steps.transfer_foreign_user(
+            user=create_user_request_2,
+            account=create_account_not_empty_balance_response,
+            to_account=create_account_response,
+            amount=TestAccountTransfer._amount_transfer_foreign_account
+        )
+        from_account_db = Account.get_account_by_id(db_session, create_account_not_empty_balance_response.id)
+        to_account_db = Account.get_account_by_id(db_session, create_account_response.id)
 
+        assert from_account_db.balance == pytest.approx(
+            create_account_not_empty_balance_response.balance, abs=0.1
+        ), (
+            f"Баланс аккаунта с id '{create_account_not_empty_balance_response.id}' "
+            f"в базе данных изменился, хотя перевод от чужого пользователя должен быть отклонён."
+        )
+        assert to_account_db.balance == pytest.approx(
+            create_account_response.balance, abs=0.1
+        ), (
+            f"Баланс аккаунта с id '{create_account_response.id}' "
+            f"в базе данных изменился, хотя перевод от чужого пользователя должен быть отклонён."
+        )
