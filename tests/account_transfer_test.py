@@ -51,4 +51,10 @@ class TestAccountTransfer:
         f"Ожидалось: {create_account_not_empty_balance_response.balance - amount},"\
         f" получено: {response.from_account_id_balance}."
 
-    def test_transfer_invalid(self):
+    def test_transfer_foreign_account(self,
+                              db_session: Session,
+                              api_manager: ApiManager,
+                              create_user_request: CreateUserRequest,
+                              create_account_response: CreateAccountResponse,
+                              create_account_not_empty_balance_response: DepositResponse):
+
