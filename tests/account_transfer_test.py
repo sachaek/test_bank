@@ -25,10 +25,23 @@ class TestAccountTransfer:
         )
         from_account_db = Account.get_account_by_id(db_session, create_account_not_empty_balance_response.id)
         to_account_db = Account.get_account_by_id(db_session, create_account_response.id)
-        assert from_account_db.balance == pytest.approx(create_account_not_empty_balance_response.balance - amount, abs=0.1)
-        assert to_account_db.balance == pytest.approx(create_account_response.balance + amount, abs=0.1)
-        assert response.from_account_id == create_account_not_empty_balance_response.id
-        assert response.to_account_id == create_account_response.id
+
+        assert from_account_db.balance == pytest.approx(
+            create_account_not_empty_balance_response.balance - amount, abs=0.1
+        ), f"Баланс аккаунта с id '{create_account_not_empty_balance_response.id}' "\
+           "в базе данных не был уменьшен на {amount}."
+        assert to_account_db.balance == pytest.approx(
+            create_account_response.balance + amount, abs=0.1
+        ), f"Баланс аккаунта с id '{create_account_response.id}' "\
+           "в базе данных не был увеличен на {amount}."
+        assert response.from_account_id == create_account_not_empty_balance_response.id,\
+        f"Ответ от API содержит неверный идентификатор аккаунта отправителя. "\
+        f"Ожидалось: {create_account_not_empty_balance_response.id}, получено: {response.from_account_id}."
+        assert response.to_account_id == create_account_response.id, \
+        f"Ответ от API содержит неверный идентификатор аккаунта получателя. "\
+        f"Ожидалось: {create_account_response.id}, получено: {response.to_account_id}."
         assert response.from_account_id_balance == pytest.approx(
             create_account_not_empty_balance_response.balance - amount, abs=0.1
-        )
+        ), f"Ответ от API содержит неверный баланс аккаунта отправителя. "\
+        f"Ожидалось: {create_account_not_empty_balance_response.balance - amount},"\
+        f" получено: {response.from_account_id_balance}."
