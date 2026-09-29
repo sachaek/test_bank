@@ -5,6 +5,8 @@ from api.models.base_model import BaseModel
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserRequest
 from api.models.create_user_response import CreateUserResponse
+from api.models.credit_submission_request import CreditSubmissionRequest
+from api.models.credit_submission_response import CreditSubmissionResponse
 from api.models.deposit_request import DepositRequest
 from api.models.deposit_response import DepositResponse
 from api.models.login_user_requests import LoginUserRequest
@@ -55,4 +57,10 @@ class Endpoint(Enum):
         request_model = TransferRequest,
         url = "/account/transfer",
         response_model = TransferResponse
+    )
+
+    CREDIT_REQUEST = EndpointConfiguration(
+        request_model = CreditSubmissionRequest,
+        url = "/credit/request",
+        response_model = CreditSubmissionResponse
     )
