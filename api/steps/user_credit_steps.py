@@ -1,4 +1,7 @@
+from requests import Response
+
 from api.foundation.endpont import Endpoint
+from api.foundation.requester.crud_requester import CrudRequester
 from api.foundation.requester.validate_crud_requester import ValidateCrudRequester
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserCreditRequest
@@ -26,5 +29,24 @@ class UserCreditSteps(BaseSteps):
                 password=user_credit.password),
             endpoint=Endpoint.CREDIT_REQUEST,
             response_spec=ResponseSpecs.request_created()
+        ).post(credit_request_data)
+        return response
+
+    def create_credit_invalid(self,
+                              user_credit: CreateUserCreditRequest,
+                              account_response: CreateAccountResponse,
+                              amount: float = 5000,
+                              term_months: int = 12) -> Response:
+        credit_request_data = CreditSubmissionRequest(
+            account_id=account_response.id,
+            amount=amount,
+            term_months=term_months
+            )
+        response = CrudRequester(
+            request_spec=RequestSpecs.auth_headers(
+                username=user_credit.username,
+                password=user_credit.password),
+            endpoint=Endpoint.CREDIT_REQUEST,
+            response_spec=ResponseSpecs.not_found()
         ).post(credit_request_data)
         return response
