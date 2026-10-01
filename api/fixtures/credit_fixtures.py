@@ -4,6 +4,7 @@ from api.classes.api_manager import ApiManager
 from api.generators.model_generator import RandomModelGenerator
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserCreditRequest, CreateUserRequest
+from api.models.credit_submission_response import CreditSubmissionResponse
 
 
 @pytest.fixture()
@@ -16,4 +17,12 @@ def create_credit_user(api_manager: ApiManager):
 def create_account_credit_response(api_manager: ApiManager,
                                    create_credit_user: CreateUserRequest) -> CreateAccountResponse:
     response = api_manager.user_steps.create_account(create_credit_user)
+    return response
+
+@pytest.fixture()
+def create_credit_response(api_manager: ApiManager,
+                           create_credit_user: CreateUserCreditRequest,
+                           create_account_credit_response: CreateAccountResponse) -> CreditSubmissionResponse:
+    response = api_manager.credit_steps.create_credit(user_credit=create_credit_user,
+                                                      account_response=create_account_credit_response)
     return response

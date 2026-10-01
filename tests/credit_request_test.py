@@ -6,6 +6,7 @@ from api.db.crud.account_crud import AccountCrudDB as Account
 from api.db.crud.credit_crud import CreditCrudDB as Credit
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserCreditRequest
+from api.models.credit_submission_response import CreditSubmissionResponse
 
 
 @pytest.mark.api
@@ -47,18 +48,15 @@ class TestCredit:
                                       db_session: Session,
                                       api_manager: ApiManager,
                                       create_credit_user: CreateUserCreditRequest,
-                                      create_account_credit_response: CreateAccountResponse):
-        api_manager.credit_steps.create_credit(user_credit=create_credit_user,
-                                               account_response=create_account_credit_response,
-                                               amount=TestCredit._credit_amount,
-                                               term_months=TestCredit._credit_term_months)
+                                      create_account_credit_response: CreateAccountResponse,
+                                      create_credit_response: CreditSubmissionResponse):
         response = api_manager.credit_steps.create_credit_invalid(user_credit=create_credit_user,
                                                                   account_response=create_account_credit_response,
                                                                   amount=TestCredit._credit_amount,
                                                                   term_months=TestCredit._credit_term_months)
         account_db = Account.get_account_by_id(db_session, create_account_credit_response.id)
         credits_db = Credit.get_credits_by_account_id(db_session, create_account_credit_response.id)
-        expected_balance = create_account_credit_response.balance + TestCredit._credit_amount
+        expected_balance = create_account_credit_response.balance + create_credit_response.amount
 
         assert response.json()["error"] == TestCredit._second_credit_error,\
             f"не тот текст ошибки, ожидали {TestCredit._second_credit_error} пришло {response.text}"
