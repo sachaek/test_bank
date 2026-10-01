@@ -3,7 +3,7 @@ from api.models.base_model import BaseModel
 
 
 class CreditSubmissionResponse(BaseModel):
-    account_id: int = Field(alias="accountId")
+    id: int = Field(description="AccountId")
     amount: float
     term_months: int = Field(alias="termMonths")
     balance: float

@@ -39,9 +39,3 @@ def create_account_not_empty_balance_response(
     assert response.id != create_account_response.id,\
         f"Аккаунт с id '{response.id}' был создан, но должен был быть уникальным и отличаться от id '{create_account_response.id}'."
     return response
-
-@pytest.fixture()
-def create_credit_user(api_manager: ApiManager):
-    user_credit_request = RandomModelGenerator.generate(CreateUserCreditRequest)
-    api_manager.admin_steps.create_user(user_credit_request)
-    return user_credit_request
