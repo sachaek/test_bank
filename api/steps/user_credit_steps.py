@@ -1,3 +1,4 @@
+import allure
 from requests import Response
 
 from api.foundation.endpont import Endpoint
@@ -15,6 +16,7 @@ from specs.response_specs import ResponseSpecs
 
 
 class UserCreditSteps(BaseSteps):
+    @allure.step("Запрос кредита на сумму {amount} на {term_months} мес.")
     def create_credit(self,
                       user_credit: CreateUserCreditRequest,
                       account_response: CreateAccountResponse,
@@ -34,6 +36,7 @@ class UserCreditSteps(BaseSteps):
         ).post(credit_request_data)
         return response
 
+    @allure.step("Невалидный запрос кредита на сумму {amount} на {term_months} мес.")
     def create_credit_invalid(self,
                               user_credit: CreateUserCreditRequest,
                               account_response: CreateAccountResponse,
@@ -53,6 +56,7 @@ class UserCreditSteps(BaseSteps):
         ).post(credit_request_data)
         return response
 
+    @allure.step("Погашение кредита на сумму {amount}")
     def repay_credit(self,
                       user: CreateUserCreditRequest,
                       account_response: CreateAccountResponse,
@@ -72,6 +76,7 @@ class UserCreditSteps(BaseSteps):
         ).post(credit_request_data)
         return response
 
+    @allure.step("Невалидное погашение кредита {credit_id} на сумму {amount} со счёта {account_id}")
     def repay_credit_invalid(self,
                              user: CreateUserCreditRequest,
                              account_id: int,

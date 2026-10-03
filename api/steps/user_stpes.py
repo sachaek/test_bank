@@ -1,3 +1,5 @@
+import allure
+
 from api.foundation.endpont import Endpoint
 from api.foundation.requester.crud_requester import CrudRequester
 from api.foundation.requester.validate_crud_requester import ValidateCrudRequester
@@ -13,6 +15,7 @@ from specs.response_specs import ResponseSpecs
 
 
 class UserSteps(BaseSteps):
+    @allure.step("Создание счёта пользователем")
     def create_account(self, create_user_request: CreateUserRequest) -> CreateAccountResponse:
         response = ValidateCrudRequester(
             request_spec=RequestSpecs.auth_headers(
@@ -23,6 +26,7 @@ class UserSteps(BaseSteps):
         ).post()
         return response
 
+    @allure.step("Пополнение счёта {account_id} на сумму {amount}")
     def change_balance(self, user: CreateUserRequest, account_id: int, amount: float) -> DepositResponse:
         deposit_request = DepositRequest(account_id=account_id, amount=amount)
         response = ValidateCrudRequester(
@@ -34,6 +38,7 @@ class UserSteps(BaseSteps):
         ).post(deposit_request)
         return response
 
+    @allure.step("Невалидное пополнение счёта {account_id} на сумму {amount}")
     def change_balance_invalid(self, user: CreateUserRequest, account_id: int, amount: float) -> DepositResponse:
         deposit_request = DepositRequest(account_id=account_id, amount=amount)
         response = CrudRequester(
@@ -45,6 +50,7 @@ class UserSteps(BaseSteps):
         ).post(deposit_request)
         return response
 
+    @allure.step("Перевод средств на сумму {amount}")
     def transfer(self,
                  user: CreateUserRequest,
                  account: CreateAccountResponse,
@@ -65,6 +71,7 @@ class UserSteps(BaseSteps):
         ).post(transfer_request)
         return response
 
+    @allure.step("Перевод средств с чужого счёта на сумму {amount}")
     def transfer_foreign_user(self,
                  user: CreateUserRequest,
                  account: CreateAccountResponse,
