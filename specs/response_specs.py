@@ -23,6 +23,12 @@ class ResponseSpecs:
         return confirm
 
     @staticmethod
+    def unprocessable_entity():
+        def confirm(response: Response):
+            assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY, response.text
+        return confirm
+
+    @staticmethod
     def not_found():
         def confirm(response: Response):
             assert response.status_code == HTTPStatus.NOT_FOUND, response.text
