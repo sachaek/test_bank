@@ -17,7 +17,7 @@ class CrudRequester(HttpRequester):
             allure.attach(str(body), "Request Body", allure.attachment_type.JSON)
 
         response = requests.post(
-            url=f"{Config.fetch("backendUrl")}{self.endpoint.value.url}",
+            url=f"{Config.fetch('backendUrl')}{self.endpoint.value.url}",
             headers=self.request_spec,
             json=body
         )
@@ -36,7 +36,7 @@ class CrudRequester(HttpRequester):
             allure.attach(f"Deleting user with ID: {user_id}", "Request Info", allure.attachment_type.TEXT)
 
         response = requests.delete(
-            url=f"{Config.fetch("backendUrl")}{self.endpoint.value.url}/{user_id}",
+            url=f"{Config.fetch('backendUrl')}{self.endpoint.value.url}/{user_id}",
             headers=self.request_spec
         )
         allure.attach(
