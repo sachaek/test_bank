@@ -5,6 +5,8 @@ from api.models.base_model import BaseModel
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserRequest
 from api.models.create_user_response import CreateUserResponse
+from api.models.credit_repay_request import CreditRepayRequest
+from api.models.credit_repay_response import CreditRepayResponse
 from api.models.credit_submission_request import CreditSubmissionRequest
 from api.models.credit_submission_response import CreditSubmissionResponse
 from api.models.deposit_request import DepositRequest
@@ -63,4 +65,10 @@ class Endpoint(Enum):
         request_model = CreditSubmissionRequest,
         url = "/credit/request",
         response_model = CreditSubmissionResponse
+    )
+
+    CREDIT_REPAY = EndpointConfiguration(
+        request_model = CreditRepayRequest,
+        url = "/credit/repay",
+        response_model = CreditRepayResponse
     )
