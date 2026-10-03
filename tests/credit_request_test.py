@@ -41,8 +41,11 @@ class TestCredit:
             f"неправильный срок кредита в ответе "\
             f"ожидали {TestCredit._credit_term_months}, пришло {response.term_months}"
         credit_db = Credit.get_credit_by_id(db_session, response.credit_id)
-        assert credit_db is not None,             f"кредит с id {response.credit_id} не нашелся в бд"
-        assert credit_db.balance == pytest.approx(-TestCredit._credit_amount, abs=0.1),         f"долг по кредиту в бд не правильный, "        f"ожидали {-TestCredit._credit_amount} а там {credit_db.balance}"
+        assert credit_db is not None,\
+            f"кредит с id {response.credit_id} не нашелся в бд"
+        assert credit_db.balance == pytest.approx(-TestCredit._credit_amount, abs=0.1),\
+            f"долг по кредиту в бд не правильный, "\
+            f"ожидали {-TestCredit._credit_amount} а там {credit_db.balance}"
 
     def test_second_credit_submission(self,
                                       db_session: Session,
@@ -81,7 +84,15 @@ class TestCredit:
         expected_account_balance = deposit_credit_account_response.balance - TestCredit._repay_amount
         expected_credit_balance = -TestCredit._credit_amount + TestCredit._repay_amount
 
-        assert response.credit_id == create_credit_response.credit_id,            f"неверный id кредита в ответе "            f"ожидали {create_credit_response.credit_id}, пришло {response.credit_id}"
-        assert response.amount_deposited == pytest.approx(TestCredit._repay_amount, abs=0.1),            f"сумма погашения в ответе не та, "            f"ожидали {TestCredit._repay_amount}, пришло {response.amount_deposited}"
-        assert account_db.balance == pytest.approx(expected_account_balance, abs=0.1),            f"баланс акаунта {create_account_credit_response.id} в бд не уменьшился на сумму погашения, "            f"ожидали {expected_account_balance} а там {account_db.balance}"
-        assert credit_db.balance == pytest.approx(expected_credit_balance, abs=0.1),            f"долг по кредиту {create_credit_response.credit_id} в бд не уменьшился, "            f"ожидали {expected_credit_balance} а там {credit_db.balance}"
+        assert response.credit_id == create_credit_response.credit_id,\
+            f"неверный id кредита в ответе "\
+            f"ожидали {create_credit_response.credit_id}, пришло {response.credit_id}"
+        assert response.amount_deposited == pytest.approx(TestCredit._repay_amount, abs=0.1),\
+            f"сумма погашения в ответе не та, "\
+            f"ожидали {TestCredit._repay_amount}, пришло {response.amount_deposited}"
+        assert account_db.balance == pytest.approx(expected_account_balance, abs=0.1),\
+            f"баланс акаунта {create_account_credit_response.id} в бд не уменьшился на сумму погашения, "\
+            f"ожидали {expected_account_balance} а там {account_db.balance}"
+        assert credit_db.balance == pytest.approx(expected_credit_balance, abs=0.1),\
+            f"долг по кредиту {create_credit_response.credit_id} в бд не уменьшился, "\
+            f"ожидали {expected_credit_balance} а там {credit_db.balance}"
