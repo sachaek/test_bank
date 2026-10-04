@@ -1,0 +1,3 @@
+class TransferDefaults:
+    FOREIGN_ACCOUNT_AMOUNT = 500
+    SENDER_INITIAL_BALANCE = 9_000
