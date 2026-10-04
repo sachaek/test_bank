@@ -21,7 +21,7 @@ class UserCreditSteps(BaseSteps):
     def create_credit(self,
                       user_credit: CreateUserCreditRequest,
                       account_response: CreateAccountResponse,
-                      amount: float = CreditDefaults.AMOUNT,
+                      amount: float,
                       term_months: int = CreditDefaults.TERM_MONTHS) -> CreditSubmissionResponse:
         credit_request_data = CreditSubmissionRequest(
             account_id=account_response.id,
@@ -41,7 +41,7 @@ class UserCreditSteps(BaseSteps):
     def create_credit_invalid(self,
                               user_credit: CreateUserCreditRequest,
                               account_response: CreateAccountResponse,
-                              amount: float = CreditDefaults.AMOUNT,
+                              amount: float,
                               term_months: int = CreditDefaults.TERM_MONTHS) -> Response:
         credit_request_data = CreditSubmissionRequest(
             account_id=account_response.id,
@@ -62,7 +62,7 @@ class UserCreditSteps(BaseSteps):
                       user: CreateUserCreditRequest,
                       account_response: CreateAccountResponse,
                       credit_response: CreditSubmissionResponse,
-                      amount: int = CreditDefaults.REPAY_AMOUNT) -> CreditRepayResponse:
+                      amount: int) -> CreditRepayResponse:
         credit_request_data = CreditRepayRequest(
             creditId=credit_response.credit_id,
             accountId=account_response.id,
@@ -82,7 +82,7 @@ class UserCreditSteps(BaseSteps):
                              user: CreateUserCreditRequest,
                              account_id: int,
                              credit_id: int,
-                             amount: int = CreditDefaults.REPAY_AMOUNT,
+                             amount: int,
                              response_spec=ResponseSpecs.unprocessable_entity()) -> Response:
         credit_request_data = CreditRepayRequest(
             creditId=credit_id,

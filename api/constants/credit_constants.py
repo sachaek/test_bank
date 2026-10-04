@@ -1,5 +1,2 @@
 class CreditDefaults:
-    AMOUNT = 5000
     TERM_MONTHS = 12
-    REPAY_AMOUNT = 5000
-    DEPOSIT_AMOUNT = 1000

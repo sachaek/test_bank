@@ -13,6 +13,7 @@ from api.assertions.account_assertions import AccountAssert
 from api.assertions.credit_assertions import CreditAssert
 from api.constants.api_errors import ApiError
 from api.constants.credit_constants import CreditDefaults
+from api.generators.amount_generator import AmountGenerator
 
 
 @pytest.mark.api
@@ -22,21 +23,22 @@ class TestCredit:
                                api_manager: ApiManager,
                                create_credit_user: CreateUserCreditRequest,
                                create_account_credit_response: CreateAccountResponse):
+        amount = AmountGenerator.credit()
         response = api_manager.credit_steps.create_credit(user_credit=create_credit_user,
                                                           account_response=create_account_credit_response,
-                                                          amount=CreditDefaults.AMOUNT,
+                                                          amount=amount,
                                                           term_months=CreditDefaults.TERM_MONTHS)
         account_db = Account.get_account_by_id(db_session, create_account_credit_response.id)
         credit_db = Credit.get_credit_by_id(db_session, response.credit_id)
 
         AccountAssert.balance_increased_by(account_db=account_db,
                                            balance_before=create_account_credit_response.balance,
-                                           amount=CreditDefaults.AMOUNT)
+                                           amount=amount)
         BaseAssert.float_equal(actual=response.amount,
-                               expected=CreditDefaults.AMOUNT,
+                               expected=amount,
                                message=f"сумма кредита в ответе некорректная, "
-                                       f"ждали {CreditDefaults.AMOUNT} пришла {response.amount}")
-        CreditAssert.debt_in_db(credit_db=credit_db, credit_amount=CreditDefaults.AMOUNT)
+                                       f"ждали {amount} пришла {response.amount}")
+        CreditAssert.debt_in_db(credit_db=credit_db, credit_amount=amount)
 
     def test_second_credit_submission(self,
                                       db_session: Session,
@@ -46,7 +48,7 @@ class TestCredit:
                                       create_credit_response: CreditSubmissionResponse):
         response = api_manager.credit_steps.create_credit_invalid(user_credit=create_credit_user,
                                                                   account_response=create_account_credit_response,
-                                                                  amount=CreditDefaults.AMOUNT,
+                                                                  amount=AmountGenerator.credit(),
                                                                   term_months=CreditDefaults.TERM_MONTHS)
         account_db = Account.get_account_by_id(db_session, create_account_credit_response.id)
 
@@ -63,23 +65,24 @@ class TestCredit:
                           create_account_credit_response: CreateAccountResponse,
                           create_credit_response: CreditSubmissionResponse,
                           deposit_credit_account_response: DepositResponse):
+        repay_amount = int(create_credit_response.amount)  # по ТЗ кредит гасится только целиком
         response = api_manager.credit_steps.repay_credit(user=create_credit_user,
                                                          account_response=create_account_credit_response,
                                                          credit_response=create_credit_response,
-                                                         amount=CreditDefaults.REPAY_AMOUNT)
+                                                         amount=repay_amount)
         account_db = Account.get_account_by_id(db_session, create_account_credit_response.id)
         credit_db = Credit.get_credit_by_id(db_session, create_credit_response.credit_id)
 
         BaseAssert.float_equal(actual=response.amount_deposited,
-                               expected=CreditDefaults.REPAY_AMOUNT,
+                               expected=repay_amount,
                                message=f"сумма погашения в ответе некорректная, "
-                                       f"ждали {CreditDefaults.REPAY_AMOUNT} пришла {response.amount_deposited}")
+                                       f"ждали {repay_amount} пришла {response.amount_deposited}")
         AccountAssert.balance_decreased_by(account_db=account_db,
                                            balance_before=deposit_credit_account_response.balance,
-                                           amount=CreditDefaults.REPAY_AMOUNT)
+                                           amount=repay_amount)
         CreditAssert.debt_in_db(credit_db=credit_db,
-                                credit_amount=CreditDefaults.AMOUNT,
-                                repaid=CreditDefaults.REPAY_AMOUNT)
+                                credit_amount=create_credit_response.amount,
+                                repaid=repay_amount)
 
     def test_repay_more_than_debt(self,
                                   db_session: Session,
@@ -87,7 +90,7 @@ class TestCredit:
                                   create_credit_user: CreateUserCreditRequest,
                                   create_credit_response: CreditSubmissionResponse,
                                   deposit_credit_account_response: DepositResponse):
-        repay_amount = CreditDefaults.AMOUNT + 1000
+        repay_amount = int(create_credit_response.amount) + 1000
         response = api_manager.credit_steps.repay_credit_invalid(user=create_credit_user,
                                                                  account_id=deposit_credit_account_response.id,
                                                                  credit_id=create_credit_response.credit_id,
