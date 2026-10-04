@@ -1,6 +1,7 @@
 import pytest
 
 from api.classes.api_manager import ApiManager
+from api.constants.credit_constants import CreditDefaults
 from api.generators.model_generator import RandomModelGenerator
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserCreditRequest, CreateUserRequest
@@ -35,5 +36,5 @@ def deposit_credit_account_response(api_manager: ApiManager,
                                     create_credit_response: CreditSubmissionResponse) -> DepositResponse:
     response = api_manager.user_steps.change_balance(user=create_credit_user,
                                                      account_id=create_account_credit_response.id,
-                                                     amount=1000)
+                                                     amount=CreditDefaults.DEPOSIT_AMOUNT)
     return response

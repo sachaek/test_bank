@@ -1,6 +1,7 @@
 import allure
 from requests import Response
 
+from api.constants.credit_constants import CreditDefaults
 from api.foundation.endpont import Endpoint
 from api.foundation.requester.crud_requester import CrudRequester
 from api.foundation.requester.validate_crud_requester import ValidateCrudRequester
@@ -20,8 +21,8 @@ class UserCreditSteps(BaseSteps):
     def create_credit(self,
                       user_credit: CreateUserCreditRequest,
                       account_response: CreateAccountResponse,
-                      amount: float = 5000,
-                      term_months: int = 12) -> CreditSubmissionResponse:
+                      amount: float = CreditDefaults.AMOUNT,
+                      term_months: int = CreditDefaults.TERM_MONTHS) -> CreditSubmissionResponse:
         credit_request_data = CreditSubmissionRequest(
             account_id=account_response.id,
             amount=amount,
@@ -40,8 +41,8 @@ class UserCreditSteps(BaseSteps):
     def create_credit_invalid(self,
                               user_credit: CreateUserCreditRequest,
                               account_response: CreateAccountResponse,
-                              amount: float = 5000,
-                              term_months: int = 12) -> Response:
+                              amount: float = CreditDefaults.AMOUNT,
+                              term_months: int = CreditDefaults.TERM_MONTHS) -> Response:
         credit_request_data = CreditSubmissionRequest(
             account_id=account_response.id,
             amount=amount,
@@ -61,7 +62,7 @@ class UserCreditSteps(BaseSteps):
                       user: CreateUserCreditRequest,
                       account_response: CreateAccountResponse,
                       credit_response: CreditSubmissionResponse,
-                      amount: int = 1000) -> CreditRepayResponse:
+                      amount: int = CreditDefaults.REPAY_AMOUNT) -> CreditRepayResponse:
         credit_request_data = CreditRepayRequest(
             creditId=credit_response.credit_id,
             accountId=account_response.id,
@@ -81,7 +82,7 @@ class UserCreditSteps(BaseSteps):
                              user: CreateUserCreditRequest,
                              account_id: int,
                              credit_id: int,
-                             amount: int = 5000,
+                             amount: int = CreditDefaults.REPAY_AMOUNT,
                              response_spec=ResponseSpecs.unprocessable_entity()) -> Response:
         credit_request_data = CreditRepayRequest(
             creditId=credit_id,
