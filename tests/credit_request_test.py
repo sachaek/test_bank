@@ -1,6 +1,7 @@
 import pytest
 from sqlalchemy.orm import Session
 
+from api.assertions.base_assertions import BaseAssert
 from api.classes.api_manager import ApiManager
 from api.db.crud.account_crud import AccountCrudDB as Account
 from api.db.crud.credit_crud import CreditCrudDB as Credit
@@ -25,18 +26,20 @@ class TestCredit:
                                                           amount=CreditDefaults.AMOUNT,
                                                           term_months=CreditDefaults.TERM_MONTHS)
         account_db = Account.get_account_by_id(db_session, create_account_credit_response.id)
+        credit_db = Credit.get_credit_by_id(db_session, response.credit_id)
         expected_balance = create_account_credit_response.balance + CreditDefaults.AMOUNT
 
         AccountAssert.assert_balance_in_db(account_id=create_account_credit_response.id,
                                            account_db=account_db,
                                            expected_balance=expected_balance)
-
-        assert response.amount == pytest.approx(CreditDefaults.AMOUNT, abs=0.1), \
-            f"сумма кредита в ответе некорректная, ждали {CreditDefaults.AMOUNT} пришла {response.amount}"
-        credit_db = Credit.get_credit_by_id(db_session, response.credit_id)
-        assert credit_db is not None, f"кредита {response.credit_id} нет в бд"
-        assert credit_db.balance == pytest.approx(-CreditDefaults.AMOUNT, abs=0.1), \
-            f"долг по кредиту в бд некорректный, ждали {-CreditDefaults.AMOUNT} а там {credit_db.balance}"
+        BaseAssert.float_equal(actual=response.amount,
+                               expected=CreditDefaults.AMOUNT,
+                               message=f"сумма кредита в ответе некорректная, "
+                                       f"ждали {CreditDefaults.AMOUNT} пришла {response.amount}")
+        BaseAssert.float_equal(actual=credit_db.balance,
+                               expected=pytest.approx(-CreditDefaults.AMOUNT, abs=0.1),
+                               message=f"долг по кредиту в бд некорректный, "
+                                       f"ждали {-CreditDefaults.AMOUNT} а там {credit_db.balance}")
 
     def test_second_credit_submission(self,
                                       db_session: Session,
