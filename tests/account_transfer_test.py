@@ -1,7 +1,10 @@
 import pytest
 from sqlalchemy.orm import Session
 
+from api.assertions.account_assertions import AccountAssert
+from api.assertions.base_assertions import BaseAssert
 from api.classes.api_manager import ApiManager
+from api.constants.transfer_constants import TransferDefaults
 from api.db.crud.account_crud import AccountCrudDB as Account
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserRequest
@@ -10,8 +13,6 @@ from api.models.deposit_response import DepositResponse
 
 @pytest.mark.api
 class TestAccountTransfer:
-    _amount_transfer_foreign_account = 500
-
     @pytest.mark.parametrize("amount", [1000.0, 7889.5])
     def test_transfer(self,
                       db_session: Session,
@@ -29,29 +30,16 @@ class TestAccountTransfer:
         from_account_db = Account.get_account_by_id(db_session, create_account_not_empty_balance_response.id)
         to_account_db = Account.get_account_by_id(db_session, create_account_response.id)
 
-        assert from_account_db.balance == pytest.approx(
-            create_account_not_empty_balance_response.balance - amount, abs=0.1
-        ), (
-            f"Баланс аккаунта с id '{create_account_not_empty_balance_response.id}' "
-            f"в базе данных не был уменьшен на {amount}."
-        )
-        assert to_account_db.balance == pytest.approx(
-            create_account_response.balance + amount, abs=0.1
-        ), (
-            f"Баланс аккаунта с id '{create_account_response.id}' "
-            f"в базе данных не был увеличен на {amount}."
-        )
-        assert response.from_account_id == create_account_not_empty_balance_response.id,\
-        f"Ответ от API содержит неверный идентификатор аккаунта отправителя. "\
-        f"Ожидалось: {create_account_not_empty_balance_response.id}, получено: {response.from_account_id}."
-        assert response.to_account_id == create_account_response.id, \
-        f"Ответ от API содержит неверный идентификатор аккаунта получателя. "\
-        f"Ожидалось: {create_account_response.id}, получено: {response.to_account_id}."
-        assert response.from_account_id_balance == pytest.approx(
-            create_account_not_empty_balance_response.balance - amount, abs=0.1
-        ), f"Ответ от API содержит неверный баланс аккаунта отправителя. "\
-        f"Ожидалось: {create_account_not_empty_balance_response.balance - amount},"\
-        f" получено: {response.from_account_id_balance}."
+        AccountAssert.balance_decreased_by(account_db=from_account_db,
+                                           balance_before=create_account_not_empty_balance_response.balance,
+                                           amount=amount)
+        AccountAssert.balance_increased_by(account_db=to_account_db,
+                                           balance_before=create_account_response.balance,
+                                           amount=amount)
+        BaseAssert.float_equal(actual=response.from_account_id_balance,
+                               expected=from_account_db.balance,
+                               message=f"баланс отправителя в ответе не совпадает с бд, "
+                                       f"в бд {from_account_db.balance} пришло {response.from_account_id_balance}")
 
     def test_transfer_foreign_account(self,
                               db_session: Session,
@@ -64,20 +52,12 @@ class TestAccountTransfer:
             user=create_user_request_2,
             account=create_account_not_empty_balance_response,
             to_account=create_account_response,
-            amount=TestAccountTransfer._amount_transfer_foreign_account
+            amount=TransferDefaults.FOREIGN_ACCOUNT_AMOUNT
         )
         from_account_db = Account.get_account_by_id(db_session, create_account_not_empty_balance_response.id)
         to_account_db = Account.get_account_by_id(db_session, create_account_response.id)
 
-        assert from_account_db.balance == pytest.approx(
-            create_account_not_empty_balance_response.balance, abs=0.1
-        ), (
-            f"Баланс аккаунта с id '{create_account_not_empty_balance_response.id}' "
-            f"в базе данных изменился, хотя перевод от чужого пользователя должен быть отклонён."
-        )
-        assert to_account_db.balance == pytest.approx(
-            create_account_response.balance, abs=0.1
-        ), (
-            f"Баланс аккаунта с id '{create_account_response.id}' "
-            f"в базе данных изменился, хотя перевод от чужого пользователя должен быть отклонён."
-        )
+        AccountAssert.balance_unchanged(account_db=from_account_db,
+                                        balance_before=create_account_not_empty_balance_response.balance)
+        AccountAssert.balance_unchanged(account_db=to_account_db,
+                                        balance_before=create_account_response.balance)

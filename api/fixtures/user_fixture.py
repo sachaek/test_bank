@@ -1,6 +1,7 @@
 import pytest
 
 from api.classes.api_manager import ApiManager
+from api.constants.transfer_constants import TransferDefaults
 from api.generators.model_generator import RandomModelGenerator
 from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserRequest, CreateUserCreditRequest
@@ -29,12 +30,12 @@ def create_account_not_empty_balance_response(
     create_user_request: CreateUserRequest,
     create_account_response: CreateAccountResponse,
 ):
-    """Возвращает аккаунт с ненулевым балансом, создавая новый аккаунт и увеличивая его баланс на 9000."""
+    """Возвращает аккаунт с ненулевым балансом, создавая новый аккаунт и увеличивая его баланс на TransferDefaults.SENDER_INITIAL_BALANCE."""
     not_empty_response = api_manager.user_steps.create_account(create_user_request)
     response = api_manager.user_steps.change_balance(
         user=create_user_request,
         account_id=not_empty_response.id,
-        amount=9_000
+        amount=TransferDefaults.SENDER_INITIAL_BALANCE
     )
     assert response.id != create_account_response.id,\
         f"Аккаунт с id '{response.id}' был создан, но должен был быть уникальным и отличаться от id '{create_account_response.id}'."
