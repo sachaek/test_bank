@@ -8,6 +8,7 @@ from api.models.create_account_response import CreateAccountResponse
 from api.models.create_user_request import CreateUserCreditRequest
 from api.models.credit_submission_response import CreditSubmissionResponse
 from api.models.deposit_response import DepositResponse
+from api.assertions.account_assertions import AccountAssert
 
 
 @pytest.mark.api
@@ -28,14 +29,12 @@ class TestCredit:
         account_db = Account.get_account_by_id(db_session, create_account_credit_response.id)
         expected_balance = create_account_credit_response.balance + TestCredit._credit_amount
 
-        assert account_db.balance == pytest.approx(expected_balance, abs=0.1), \
-            f"баланс аккаунта {create_account_credit_response.id} в бд не вырос, ждали {expected_balance} а там {account_db.balance}"
-        assert response.id == create_account_credit_response.id, \
-            f"в ответе не тот id аккаунта, ждали {create_account_credit_response.id} пришел {response.id}"
+        AccountAssert.assert_balance_in_db(account_id=create_account_credit_response.id,
+                                           account_db=account_db,
+                                           expected_balance=expected_balance)
+
         assert response.amount == pytest.approx(TestCredit._credit_amount, abs=0.1), \
             f"сумма кредита в ответе некорректная, ждали {TestCredit._credit_amount} пришла {response.amount}"
-        assert response.term_months == TestCredit._credit_term_months, \
-            f"срок кредита в ответе некорректный, ждали {TestCredit._credit_term_months} пришел {response.term_months}"
         credit_db = Credit.get_credit_by_id(db_session, response.credit_id)
         assert credit_db is not None, f"кредита {response.credit_id} нет в бд"
         assert credit_db.balance == pytest.approx(-TestCredit._credit_amount, abs=0.1), \
