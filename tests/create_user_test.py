@@ -2,6 +2,7 @@ import pytest
 from sqlalchemy.orm import Session
 
 from api.classes.api_manager import ApiManager
+from api.constants.roles import Role
 from api.generators.model_generator import RandomModelGenerator
 from api.models.create_user_request import CreateUserRequest
 from api.db.crud.user_crud import UserCrudDB as User
@@ -40,7 +41,7 @@ class TestCreateUser:
         create_user_request = CreateUserRequest(
             username=username,
             password=password,
-            role="ROLE_USER"
+            role=Role.USER
         )
         api_manager.admin_steps.create_invalid_user(create_user_request)
 
