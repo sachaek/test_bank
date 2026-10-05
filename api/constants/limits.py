@@ -6,3 +6,4 @@ class Limits:
     TRANSFER_MAX = 10000
     CREDIT_MIN = 5000
     CREDIT_MAX = 15000
+
