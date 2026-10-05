@@ -17,3 +17,7 @@ class AmountGenerator:
         max_amount = min(Limits.TRANSFER_MAX, balance)
         amount = random.uniform(Limits.TRANSFER_MIN, max_amount)
         return round(amount, 2)
+
+    @staticmethod
+    def overpay(debt: float) -> int:
+        return int(debt) + random.randint(1, 1000)

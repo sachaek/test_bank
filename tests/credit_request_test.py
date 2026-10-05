@@ -90,7 +90,7 @@ class TestCredit:
                                   create_credit_user: CreateUserCreditRequest,
                                   create_credit_response: CreditSubmissionResponse,
                                   deposit_credit_account_response: DepositResponse):
-        repay_amount = int(create_credit_response.amount) + 1000
+        repay_amount = AmountGenerator.overpay(debt=create_credit_response.amount)
         response = api_manager.credit_steps.repay_credit_invalid(user=create_credit_user,
                                                                  account_id=deposit_credit_account_response.id,
                                                                  credit_id=create_credit_response.credit_id,
