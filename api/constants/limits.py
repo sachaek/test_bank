@@ -1,5 +1,8 @@
 class Limits:
-    """Границы сумм из требований."""
-    DEPOSIT_MIN, DEPOSIT_MAX = 1000, 9000
-    TRANSFER_MIN, TRANSFER_MAX = 500, 10000
-    CREDIT_MIN, CREDIT_MAX = 5000, 15000
+    # Лимиты из требований для генерации случайных сумм операций
+    DEPOSIT_MIN = 1000
+    DEPOSIT_MAX = 9000
+    TRANSFER_MIN = 500
+    TRANSFER_MAX = 10000
+    CREDIT_MIN = 5000
+    CREDIT_MAX = 15000
