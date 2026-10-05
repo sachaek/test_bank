@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from api.classes.api_manager import ApiManager
 from api.constants.roles import Role
+from api.constants.user_test_data import INVALID_USERS
 from api.generators.model_generator import RandomModelGenerator
 from api.models.create_user_request import CreateUserRequest
 from api.db.crud.user_crud import UserCrudDB as User
@@ -23,20 +24,7 @@ class TestCreateUser:
         assert user_from_db.username == create_user_request.username,\
             f"Пользователь с username '{create_user_request.username}' не был создан в базе данных."
 
-    @pytest.mark.parametrize(
-        "username, password",
-        [
-            ("абв", "Pas!w0rd"),
-            ("ab", "Pas!w0rd"),
-            ("abv!", "Pas!w0rd"),
-            ("Maxx1", "Pas!w0rд"),
-            ("Maxx2", "Pas!w0"),
-            ("Maxx3", "pas!w0rd"),
-            ("Maxx4", "PAS!W0RD"),
-            ("Maxx5", "PAS!WORD"),
-            ("Maxx6", "PASSW0RD")
-        ]
-    )
+    @pytest.mark.parametrize("username, password", INVALID_USERS)
     def test_create_user_invalid(self, username: str, password: str, api_manager: ApiManager, db_session: Session):
         create_user_request = CreateUserRequest(
             username=username,
