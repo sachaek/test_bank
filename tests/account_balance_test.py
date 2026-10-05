@@ -52,6 +52,6 @@ class TestAccountBalance:
             amount=amount)
 
         account_from_db = Account.get_account_by_id(db_session, create_account_response.id)
-        assert account_from_db.balance == pytest.approx(create_account_response.balance, abs=0.1), \
-            f"Баланс аккаунта с id '{create_account_response.id}'"\
-            f" в базе данных был изменен на {amount}, но не должен был быть изменен."
+
+        AccountAssert.balance_unchanged(account_db=account_from_db,
+                                        balance_before=create_account_response.balance)
